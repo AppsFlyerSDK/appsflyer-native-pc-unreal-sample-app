@@ -90,7 +90,7 @@ RequestData CAppsflyerPCModule::buildRequestData()
 	return req;
 }
 
-void CAppsflyerPCModule::SendHTTPReq(FHttpRequestRef pRequest, uint64 contextId)
+void CAppsflyerPCModule::SendHTTPReq(FHttpRequestRef pRequest, int64 contextId)
 {
 	UE_LOG(LogTemp, Warning, TEXT("context is: %i"), contextId);
 	if (contextId == FIRST_OPEN_REQUEST || contextId == SESSION_REQUEST)

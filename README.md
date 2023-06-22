@@ -24,7 +24,7 @@ We recommend you use this sample app as a reference for integrating the AppsFlye
 
 ## AppsflyerModule - Interface
 
-`AppsflyerModule.h`, included in the `appsflyer-unreal-sample-app/AppsflyerIntegrationFiles` folder, contains the required code and logic to connect to AppsFlyer servers and report events.
+`AppsflyerModule.h`, included in the `appsflyer-native-pc-unreal-sample-app/AppsflyerPCModule` folder, contains the required code and logic to connect to AppsFlyer servers and report events.
 
 ### Init
 
@@ -118,16 +118,15 @@ AppsflyerModule()->getAppsFlyerUID();
 
 ### Setup
 
-1. In your Unreal editor, go to **Plugins**, activate **Online Subsystem EOS**, and then restart the editor.
-2. Open the project in your preferred C++ editor and in the `[YOUR-APP-NAME].Build.cs` file, add `OpenSSL` to your dependencies and `HTTP` as a private dependency:
+1. Open the project in your preferred C++ editor and in the `[YOUR-APP-NAME].Build.cs` file, add `OpenSSL` to your dependencies and `HTTP` as a private dependency:
 
 ```c#
 PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "HeadMountedDisplay", "OpenSSL" });
 PrivateDependencyModuleNames.Add("HTTP");
 ```
 
-5. In your Unreal Project files, under the **Source** directory, create a new directory named **AppsflyerModule**.
-6. Copy the following files from `appsflyer-unreal-sample-app/AppsflyerIntegrationFiles` to the new folder:
+2. In your Unreal Project files, under the `Source/[YOUR-APP-NAME]` directory, create a new directory named `AppsflyerPCModule`.
+3. Copy the following files from `appsflyer-native-pc-unreal-sample-app/AppsflyerPCModule` to the new folder:
 
    - AppsflyerModule.cpp
    - AppsflyerModule.cpp
@@ -135,8 +134,8 @@ PrivateDependencyModuleNames.Add("HTTP");
    - DeviceID.h
    - RequestData.h
 
-7. Generate project files in order to add OpenSSL. [Learn more](https://forums.unrealengine.com/t/how-to-use-included-openssl/670971/2)
-8. In the `GameMode.h` file, add the `StartPlay()` function:
+4. Generate project files in order to add OpenSSL. [Learn more](https://forums.unrealengine.com/t/how-to-use-included-openssl/670971/2)
+5. In the `GameMode.h` file, add the `StartPlay()` function:
 
 ```c++
 UCLASS(minimalapi)
@@ -151,65 +150,28 @@ public:
 
 ```
 
-9. Open the `Source/AppsFlyerSample/AppsFlyerSampleGameMode.cpp` file and add the following include to your GameMode.cpp file.
+6. Open the `Source/[YOUR-APP-NAME]/AppsFlyerSampleGameMode.cpp` file and add the following include to your GameMode.cpp file.
 
 ```c++
-#include "AppsflyerModule.cpp"
+#include "AppsflyerPCModule/AppsflyerPCModule.h"
+using Super = AGameModeBase;
 ```
 
-10. Add the following function, making sure to replace `DEV_KEY` and `APP_ID` in the [`init`](#init) function with your [app details](#app-details) and initialize the EOS SDK with your EOS details.
+7. Add the following function, making sure to replace `DEV_KEY` and `APP_ID` in the [`init`](#init) function with your [app details](#app-details), and report [in-app events](#logevent)
 
 ```c++
-void ATestGameMode::StartPlay()
+void AAppsFlyerSampleGameMode::StartPlay()
 {
  Super::StartPlay();
-
- EOS_InitializeOptions SDKOptions;
- SDKOptions.ApiVersion = EOS_INITIALIZE_API_LATEST;
- SDKOptions.AllocateMemoryFunction = NULL;
- SDKOptions.ReallocateMemoryFunction = NULL;
- SDKOptions.ReleaseMemoryFunction = NULL;
- SDKOptions.ProductName = "PRODUCT_NAME";
- SDKOptions.ProductVersion = "1.0";
- SDKOptions.Reserved = NULL;
- SDKOptions.SystemInitializeOptions = NULL;
- EOS_EResult res = EOS_Initialize(&SDKOptions);
-
- if (res == EOS_EResult::EOS_Success || res == EOS_EResult::EOS_AlreadyConfigured) {
-  EOS_Platform_Options PlatformOptions;
-  PlatformOptions.ApiVersion = EOS_PLATFORM_OPTIONS_API_LATEST;
-  PlatformOptions.Reserved = NULL;
-  PlatformOptions.bIsServer = false;
-  PlatformOptions.EncryptionKey = NULL;
-  PlatformOptions.OverrideCountryCode = NULL;
-  PlatformOptions.OverrideLocaleCode = NULL;
-  PlatformOptions.ProductId = "PRODUCT_ID";
-  EOS_Platform_ClientCredentials cCreds;
-  cCreds.ClientId = "CLIENT_ID";
-  cCreds.ClientSecret = "CLIENT_SECRET";
-  PlatformOptions.ClientCredentials = cCreds;
-  PlatformOptions.SandboxId = "SANDBOX_ID";
-  PlatformOptions.DeploymentId = "DEPLOYMENT_ID";
-  PlatformOptions.EncryptionKey = "ENCRYPTION_KEY";
-  EOS_HPlatform platform = EOS_Platform_Create(&PlatformOptions);
-
-  // af module init
-  AppsflyerModule()->init("DEV_KEY", "APP_ID");
-  // af send firstopen/session
-  AppsflyerModule()->start();
-
-  //set event name
-  std::string event_name = "af_purchase";
-  //set json string
-  std::string event_values = "{\"af_currency\":\"USD\",\"af_price\":6.66,\"af_revenue\":24.12}";
-  // af send inapp event
-  AppsflyerModule()->logEvent(event_name, event_values);
- }
- else {
-  UE_LOG(LogTemp, Warning, TEXT("EOS FAIL"));
-  return;
- }
+ // af module init
+ AppsflyerPCModule()->init("DEV_KEY", "APP_ID");
+ // af send firstopen/session
+ AppsflyerPCModule()->start();
+ //set event name
+ std::string event_name = "af_purchase";
+ //set json string
+ std::string event_values = "{\"af_currency\":\"USD\",\"af_price\":6.66,\"af_revenue\":24.12}";
+ // af send inapp event
+ AppsflyerPCModule()->logEvent(event_name, event_values);
 }
 ```
-
-11. Report [in-app events](#logevent)
