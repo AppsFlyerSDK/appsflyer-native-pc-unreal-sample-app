@@ -60,6 +60,12 @@ std::string CAppsflyerPCModule::getAppsFlyerUID()
 	return afc.get_AF_id();
 }
 
+bool CAppsflyerPCModule::isInstallOlderThanDate(std::string datestring)
+{
+	AppsflyerModule afc(devkey, appID);
+	return afc.isInstallOlderThanDate(datestring);
+}
+
 RequestData CAppsflyerPCModule::buildRequestData()
 {
 	AppsflyerModule afc(devkey, appID);

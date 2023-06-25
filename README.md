@@ -104,6 +104,28 @@ std::string getAppsFlyerUID()
 AppsflyerModule()->getAppsFlyerUID();
 ```
 
+### IsInstallOlderThanDate
+
+This method receives a date string and returns true if the game folder modification date is older than the date string. The date string format is: "2023-January-01 23:12:34"
+
+**Method signature**
+
+```c++
+bool isInstallOlderThanDate(std::string datestring)
+```
+
+**Usage**:
+
+```c++
+// the modification date in this example is "2023-January-23 08:30:00"
+
+// will return false
+bool dateBefore = AppsflyerSteamModule()->isInstallOlderThanDate("2023-January-01 23:12:34");
+
+// will return true
+bool dateAfter = AppsflyerSteamModule()->isInstallOlderThanDate("2023-April-10 23:12:34");
+```
+
 ## Running the sample app
 
 1. Open the UE4 engine.

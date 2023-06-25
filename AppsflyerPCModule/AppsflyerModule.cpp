@@ -204,6 +204,35 @@ public:
 		return res;
 	}
 
+	bool isInstallOlderThanDate(string date)
+	{
+		bool isInstallOlder = false;
+
+		// FString RelativePath = FPaths::GameSourceDir();
+		// FString CollapsedPath(RelativePath);
+		// bool bCollapseSuccess = FPaths::CollapseRelativeDirectories(CollapsedPath);
+		// FString AbsolutePath(FPaths::ConvertRelativePathToFull(CollapsedPath));
+		// UE_LOG(LogTemp, Warning, TEXT("AbsolutePath: %s"), *AbsolutePath);
+		// const char* folderPathCh = StringCast<ANSICHAR>(*AbsolutePath).Get();
+
+		FString launchDir = FPaths::LaunchDir();
+		UE_LOG(LogTemp, Warning, TEXT("launchDir: %s"), *launchDir);
+		const char *folderPathCh = StringCast<ANSICHAR>(*launchDir).Get();
+
+		struct stat result;
+		if (stat(folderPathCh, &result) == 0)
+		{
+			__time64_t mod_time = result.st_mtime;
+			auto folder_time = ctime(&mod_time);
+			std::time_t excludeInstallDateBefore = to_time_t(date);
+			double diff = difftime(mod_time, excludeInstallDateBefore);
+			isInstallOlder = diff < 0;
+			auto time = ctime(&mod_time);
+		}
+
+		return isInstallOlder;
+	}
+
 private:
 	std::string _appid;
 

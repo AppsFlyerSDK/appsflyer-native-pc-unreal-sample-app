@@ -26,6 +26,7 @@ public:
 	void logEvent(std::string event_name, std::string event_values);
 	// get AppsFlyer's unique device ID.
 	std::string getAppsFlyerUID();
+	bool isInstallOlderThanDate(std::string datestring);
 
 private:
 	const char *devkey;
