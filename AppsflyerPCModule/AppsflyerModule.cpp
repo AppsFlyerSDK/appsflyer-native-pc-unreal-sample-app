@@ -91,7 +91,7 @@ public:
 		/* Now specify the POST data */
 		std::ostringstream oss;
 
-		oss << "{\"device_ids\":[{\"type\":\"" << req.device_ids[0].type << "\",\"value\":\"" << req.device_ids[0].value << "\"}],\"request_id\":\"" << req.request_id << "\",\"device_os_version\":\"" << req.device_os_version << "\",\"device_model\":\"" << req.device_model << "\",\"limit_ad_tracking\":" << req.limit_ad_tracking << ",\"app_version\":\"" << req.app_version << "\",\"event_parameters\":" << req.event_values << ",\"event_name\":\"" << req.event_name << "\"}";
+		oss << "{\"device_ids\":[{\"type\":\"" << req.device_ids[0].type << "\",\"value\":\"" << req.device_ids[0].value << "\"}],\"request_id\":\"" << req.request_id << "\",\"device_os_version\":\"" << req.device_os_version << "\",\"device_model\":\"" << req.device_model << "\",\"limit_ad_tracking\":" << req.limit_ad_tracking << ",\"app_version\":\"" << req.app_version << "\",\"event_parameters\":" << req.event_parameters << ",\"event_name\":\"" << req.event_name << "\"}";
 		std::string jsonData = oss.str();
 
 		return send_http_post(url, jsonData, INAPP_EVENT_REQUEST);
@@ -208,13 +208,6 @@ public:
 	{
 		bool isInstallOlder = false;
 
-		// FString RelativePath = FPaths::GameSourceDir();
-		// FString CollapsedPath(RelativePath);
-		// bool bCollapseSuccess = FPaths::CollapseRelativeDirectories(CollapsedPath);
-		// FString AbsolutePath(FPaths::ConvertRelativePathToFull(CollapsedPath));
-		// UE_LOG(LogTemp, Warning, TEXT("AbsolutePath: %s"), *AbsolutePath);
-		// const char* folderPathCh = StringCast<ANSICHAR>(*AbsolutePath).Get();
-
 		FString launchDir = FPaths::LaunchDir();
 		UE_LOG(LogTemp, Warning, TEXT("launchDir: %s"), *launchDir);
 		const char *folderPathCh = StringCast<ANSICHAR>(*launchDir).Get();
@@ -223,11 +216,9 @@ public:
 		if (stat(folderPathCh, &result) == 0)
 		{
 			__time64_t mod_time = result.st_mtime;
-			auto folder_time = ctime(&mod_time);
 			std::time_t excludeInstallDateBefore = to_time_t(date);
 			double diff = difftime(mod_time, excludeInstallDateBefore);
 			isInstallOlder = diff < 0;
-			auto time = ctime(&mod_time);
 		}
 
 		return isInstallOlder;
