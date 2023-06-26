@@ -3,7 +3,8 @@
 #include <vector>
 #include "DeviceID.h"
 
-class RequestData {
+class RequestData
+{
 public:
 	std::string timestamp;
 	std::string ip;
@@ -14,5 +15,5 @@ public:
 	std::string request_id;
 	std::string limit_ad_tracking;
 	std::string event_name;
-	std::string event_values;
+	std::string event_parameters;
 };
