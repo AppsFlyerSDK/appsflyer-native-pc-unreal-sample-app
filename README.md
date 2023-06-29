@@ -197,3 +197,9 @@ void AAppsFlyerSampleGameMode::StartPlay()
  AppsflyerPCModule()->LogEvent(event_name, event_parameters);
 }
 ```
+
+## Resetting the attribtion
+
+Delete the `appsflyer_info` file:
+
+![Delete the](https://files.readme.io/d43d8ce-image.png)
