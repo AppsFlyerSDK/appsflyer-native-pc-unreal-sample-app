@@ -39,7 +39,7 @@ void Init(const char* devkey, const char* appID)
 **Usage**:
 
 ```c++
-AppsflyerModule()->Init("DEV_KEY", "APP_ID");
+AppsflyerModule()->Init(<< DEV_KEY >>, << APP_ID >>);
 ```
 
 <span id="app-details">**Arguments**:</span>
@@ -124,6 +124,10 @@ bool dateBefore = AppsflyerSteamModule()->IsInstallOlderThanDate("2023-January-0
 
 // will return true
 bool dateAfter = AppsflyerSteamModule()->IsInstallOlderThanDate("2023-April-10 23:12:34");
+
+// example usage with skipFirst:
+bool isInstallOlderThanDate = AppsflyerLauncherModule()->IsInstallOlderThanDate("2023-April-10 23:12:34");
+AppsflyerLauncherModule()->Start(isInstallOlderThanDate);
 ```
 
 ## Running the sample app
@@ -186,7 +190,7 @@ void AAppsFlyerSampleGameMode::StartPlay()
 {
  Super::StartPlay();
  // af module init
- AppsflyerPCModule()->Init("DEV_KEY", "APP_ID");
+ AppsflyerPCModule()->Init(<< DEV_KEY >>, << APP_ID >>);
  // af send firstopen/session
  AppsflyerPCModule()->Start();
  //set event name
