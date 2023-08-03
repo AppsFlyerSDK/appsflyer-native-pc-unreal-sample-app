@@ -204,6 +204,16 @@ public:
 		return res;
 	}
 
+	std::time_t to_time_t(const std::string &str, bool is_dst = false, const std::string &format = "%Y-%b-%d %H:%M:%S")
+	{
+		std::tm t = {0};
+		t.tm_isdst = is_dst ? 1 : 0;
+		std::istringstream ss(str);
+		ss >> std::get_time(&t, format.c_str());
+		return mktime(&t);
+	}
+
+
 	bool isInstallOlderThanDate(string date)
 	{
 		bool isInstallOlder = false;
