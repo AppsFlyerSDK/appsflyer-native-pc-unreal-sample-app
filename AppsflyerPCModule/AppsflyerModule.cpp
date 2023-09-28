@@ -89,12 +89,24 @@ public:
 		std::string url = "https://events.appsflyer.com/v1.0/c2s/inapp/app/nativepc/" + _appid;
 
 		/* Now specify the POST data */
-		std::ostringstream oss;
-
-		oss << "{\"device_ids\":[{\"type\":\"" << req.device_ids[0].type << "\",\"value\":\"" << req.device_ids[0].value << "\"}],\"request_id\":\"" << req.request_id << "\",\"device_os_version\":\"" << req.device_os_version << "\",\"device_model\":\"" << req.device_model << "\",\"limit_ad_tracking\":" << req.limit_ad_tracking << ",\"app_version\":\"" << req.app_version << "\",\"event_parameters\":" << req.event_parameters << ",\"event_name\":\"" << req.event_name << "\"}";
-		std::string jsonData = oss.str();
+		std::string jsonData = postDataStr(req, true);
 
 		return send_http_post(url, jsonData, INAPP_EVENT_REQUEST);
+	}
+
+	std::string postDataStr(RequestData req, bool isEvent = false) {
+		std::ostringstream oss;
+		oss << "{\"device_ids\":[{\"type\":\"" << req.device_ids[0].type << "\",\"value\":\"" << req.device_ids[0].value << "\"}";
+		oss << "],\"request_id\":\"" << req.request_id << "\",\"device_os_version\":\"" << req.device_os_version << "\",\"device_model\":\"" << req.device_model << "\",\"limit_ad_tracking\":" << req.limit_ad_tracking << ",\"app_version\":\"" << req.app_version << "\"";
+		if (isEvent) {
+			oss << ",\"event_parameters\":" << req.event_parameters << ",\"event_name\":\"" << req.event_name << "\"";
+		}
+		if (!req.customer_user_id.empty()) {
+			oss << ",\"customer_user_id\":\"" << req.customer_user_id << "\"";
+		}
+		oss << "}";
+
+		return oss.str();
 	}
 
 	// return af uuid
@@ -261,9 +273,7 @@ private:
 		std::string url = "https://events.appsflyer.com/v1.0/c2s/first_open/app/nativepc/" + _appid;
 
 		/* Now specify the POST data */
-		std::ostringstream oss;
-		oss << "{\"device_ids\":[{\"type\":\"" << req.device_ids[0].type << "\",\"value\":\"" << req.device_ids[0].value.c_str() << "\"}],\"timestamp\":" << req.timestamp << ",\"request_id\":\"" << req.request_id << "\",\"device_os_version\":\"" << req.device_os_version << "\",\"device_model\":\"" << req.device_model << "\",\"limit_ad_tracking\":" << req.limit_ad_tracking << ",\"app_version\":\"" << req.app_version << "\"}";
-		std::string jsonData = oss.str();
+		std::string jsonData = postDataStr(req);
 
 		return send_http_post(url, jsonData, FIRST_OPEN_REQUEST);
 		// CURLcode res = send_http_post(url, jsonData);
@@ -275,9 +285,7 @@ private:
 		std::string url = "https://events.appsflyer.com/v1.0/c2s/session/app/nativepc/" + _appid;
 
 		/* Now specify the POST data */
-		std::ostringstream oss;
-		oss << "{\"device_ids\":[{\"type\":\"" << req.device_ids[0].type << "\",\"value\":\"" << req.device_ids[0].value.c_str() << "\"}],\"timestamp\":" << req.timestamp << ",\"request_id\":\"" << req.request_id << "\",\"device_os_version\":\"" << req.device_os_version << "\",\"device_model\":\"" << req.device_model << "\",\"limit_ad_tracking\":" << req.limit_ad_tracking << ",\"app_version\":\"" << req.app_version << "\"}";
-		std::string jsonData = oss.str();
+		std::string jsonData = postDataStr(req);
 
 		return send_http_post(url, jsonData, SESSION_REQUEST);
 	}
