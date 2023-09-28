@@ -29,10 +29,13 @@ void CAppsflyerPCModule::Init(const char *dkey, const char *appid)
 {
 	devkey = dkey;
 	appID = appid;
+	isStopped = true;
 }
 
 void CAppsflyerPCModule::Start(bool skipFirst)
 {
+	isStopped = false;
+
 	AppsflyerModule afc(devkey, appID);
 
 	RequestData req = buildRequestData();
@@ -41,8 +44,17 @@ void CAppsflyerPCModule::Start(bool skipFirst)
 	SendHTTPReq(reqH, FIRST_OPEN_REQUEST);
 }
 
+void CAppsflyerPCModule::Stop()
+{
+	isStopped = true;
+}
+
 void CAppsflyerPCModule::LogEvent(std::string event_name, std::string event_parameters)
 {
+	if (isStopped) {
+		return;
+	}
+
 	AppsflyerModule afc(devkey, appID);
 
 	RequestData req = buildRequestData();
@@ -54,10 +66,20 @@ void CAppsflyerPCModule::LogEvent(std::string event_name, std::string event_para
 	SendHTTPReq(reqH, INAPP_EVENT_REQUEST);
 }
 
-std::string CAppsflyerPCModule::getAppsFlyerUID()
+std::string CAppsflyerPCModule::GetAppsFlyerUID()
 {
 	AppsflyerModule afc(devkey, appID);
 	return afc.get_AF_id();
+}
+
+void CAppsflyerPCModule::SetCustomerUserId(std::string customerUserID)
+{
+	if (!isStopped) {
+		// Cannot set CustomerUserID while the SDK has started.
+		return;
+	}
+	// Customer User ID has been set
+	cuid = customerUserID;
 }
 
 bool CAppsflyerPCModule::IsInstallOlderThanDate(std::string datestring)
@@ -92,6 +114,10 @@ RequestData CAppsflyerPCModule::buildRequestData()
 	af_id.type = "custom";
 	af_id.value = afc.get_AF_id().c_str();
 	req.device_ids.insert(req.device_ids.end(), af_id);
+
+	if (!cuid.empty()) {
+		req.customer_user_id = cuid;
+	}
 
 	return req;
 }

@@ -23,9 +23,9 @@ We recommend you use this sample app as a reference for integrating the AppsFlye
 
 <hr/>
 
-## AppsflyerModule - Interface
+## AppsflyerPCModule - Interface
 
-`AppsflyerModule.h`, included in the `appsflyer-native-pc-unreal-sample-app/AppsflyerPCModule` folder, contains the required code and logic to connect to AppsFlyer servers and report events.
+`AppsflyerPCModule.h`, included in the `appsflyer-native-pc-unreal-sample-app/AppsflyerPCModule` folder, contains the required code and logic to connect to AppsFlyer servers and report events.
 
 ### Init
 
@@ -40,7 +40,7 @@ void Init(const char* devkey, const char* appID)
 **Usage**:
 
 ```c++
-AppsflyerModule()->Init(<< DEV_KEY >>, << APP_ID >>);
+AppsflyerPCModule()->Init(<< DEV_KEY >>, << APP_ID >>);
 ```
 
 <span id="app-details">**Arguments**:</span>
@@ -62,12 +62,35 @@ void Start(bool skipFirst = false)
 
 ```c++
 // without the flag
-AppsflyerModule()->Start();
+AppsflyerPCModule()->Start();
 
 // with the flag
 bool skipFirst = [SOME_CONDITION];
-AppsflyerModule()->Start(skipFirst);
+AppsflyerPCModule()->Start(skipFirst);
 ```
+
+
+### Stop
+
+Once this method is invoked, our SDK no longer communicates with our servers and stops functioning.
+Useful when implementing user opt-in/opt-out.
+
+**Method signature**
+
+```c++
+void Stop()
+```
+
+**Usage**:
+
+```c++
+// Starting the SDK
+AppsflyerPCModule()->Start();
+// ...
+// Stopping the SDK, preventing further communication with AppsFlyer
+AppsflyerPCModule()->Stop();
+```
+
 
 ### LogEvent
 
@@ -86,7 +109,7 @@ void LogEvent(std::string event_name, json event_parameters)
 std::string event_name = "af_purchase";
 //set json string
 std::string event_parameters = "{\"af_currency\":\"USD\",\"af_price\":6.66,\"af_revenue\":24.12}";
-AppsflyerModule()->LogEvent(event_name, event_parameters);
+AppsflyerPCModule()->LogEvent(event_name, event_parameters);
 ```
 
 ### GetAppsFlyerUID
@@ -102,7 +125,27 @@ std::string GetAppsFlyerUID()
 **Usage**:
 
 ```c++
-AppsflyerModule()->GetAppsFlyerUID();
+AppsflyerPCModule()->GetAppsFlyerUID();
+```
+
+### SetCustomerUserId
+
+Setting your own customer ID enables you to cross-reference your own unique ID with AppsFlyer’s unique ID and other devices’ IDs.
+This ID is available in raw-data reports and in the Postback APIs for cross-referencing with your internal IDs.
+Can be used only before calling `Start()`.
+
+**Method signature**
+
+```c++
+void SetCustomerUserId(std::string cuid)
+```
+
+**Usage**:
+
+```c++
+AppsflyerPCModule()->Init(DEV_KEY, APP_ID);
+AppsflyerPCModule()->SetCustomerUserId("Test-18-9-23");
+AppsflyerPCModule()->Start();
 ```
 
 ### IsInstallOlderThanDate
@@ -121,14 +164,14 @@ bool IsInstallOlderThanDate(std::string datestring)
 // the modification date in this example is "2023-January-23 08:30:00"
 
 // will return false
-bool dateBefore = AppsflyerSteamModule()->IsInstallOlderThanDate("2023-January-01 23:12:34");
+bool dateBefore = AppsflyerPCModule()->IsInstallOlderThanDate("2023-January-01 23:12:34");
 
 // will return true
-bool dateAfter = AppsflyerSteamModule()->IsInstallOlderThanDate("2023-April-10 23:12:34");
+bool dateAfter = AppsflyerPCModule()->IsInstallOlderThanDate("2023-April-10 23:12:34");
 
 // example usage with skipFirst:
-bool isInstallOlderThanDate = AppsflyerLauncherModule()->IsInstallOlderThanDate("2023-April-10 23:12:34");
-AppsflyerLauncherModule()->Start(isInstallOlderThanDate);
+bool isInstallOlderThanDate = AppsflyerPCModule()->IsInstallOlderThanDate("2023-April-10 23:12:34");
+AppsflyerPCModule()->Start(isInstallOlderThanDate);
 ```
 
 ## Running the sample app
@@ -155,9 +198,9 @@ PrivateDependencyModuleNames.Add("HTTP");
 2. In your Unreal Project files, under the `Source/[YOUR-APP-NAME]` directory, create a new directory named `AppsflyerPCModule`.
 3. Copy the following files from `appsflyer-native-pc-unreal-sample-app/AppsflyerPCModule` to the new folder:
 
-   - AppsflyerModule.cpp
-   - AppsflyerModule.cpp
-   - AppsflyerModule.h
+   - AppsflyerPCModule.cpp
+   - AppsflyerPCModule.cpp
+   - AppsflyerPCModule.h
    - DeviceID.h
    - RequestData.h
 
