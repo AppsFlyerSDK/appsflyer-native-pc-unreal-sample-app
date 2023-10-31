@@ -62,7 +62,7 @@ public:
 		// pRequest->SetHeader(TEXT("User-Agent"), "X-UnrealEngine-Agent");
 		pRequest->SetHeader("Content-Type", TEXT("application/json"));
 		pRequest->SetHeader("Authorization", json_data_str.c_str());
-		FString dataFString(jsonData.c_str());
+		FString dataFString(UTF8_TO_TCHAR(jsonData.c_str()));
 		pRequest->SetContentAsString(dataFString);
 
 		return pRequest;
@@ -100,6 +100,9 @@ public:
 		oss << "],\"request_id\":\"" << req.request_id << "\",\"device_os_version\":\"" << req.device_os_version << "\",\"device_model\":\"" << req.device_model << "\",\"limit_ad_tracking\":" << req.limit_ad_tracking << ",\"app_version\":\"" << req.app_version << "\"";
 		if (isEvent) {
 			oss << ",\"event_parameters\":" << req.event_parameters << ",\"event_name\":\"" << req.event_name << "\"";
+			if (req.event_custom_parameters != "") {
+				oss << ",\"event_custom_parameters\":" << req.event_custom_parameters;
+			}
 		}
 		if (!req.customer_user_id.empty()) {
 			oss << ",\"customer_user_id\":\"" << req.customer_user_id << "\"";
