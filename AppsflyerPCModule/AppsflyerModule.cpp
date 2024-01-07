@@ -49,7 +49,7 @@ public:
 		std::string json_data_str = ss.str();
 
 		FHttpModule &httpModule = FHttpModule::Get();
-		TSharedRef<IHttpRequest, ESPMode::ThreadSafe> pRequest = httpModule.CreateRequest();
+		auto pRequest = httpModule.CreateRequest();
 
 		FString urlFString(url.c_str());
 		pRequest->SetURL(urlFString);
@@ -94,17 +94,21 @@ public:
 		return send_http_post(url, jsonData, INAPP_EVENT_REQUEST);
 	}
 
-	std::string postDataStr(RequestData req, bool isEvent = false) {
+	std::string postDataStr(RequestData req, bool isEvent = false)
+	{
 		std::ostringstream oss;
 		oss << "{\"device_ids\":[{\"type\":\"" << req.device_ids[0].type << "\",\"value\":\"" << req.device_ids[0].value << "\"}";
 		oss << "],\"request_id\":\"" << req.request_id << "\",\"device_os_version\":\"" << req.device_os_version << "\",\"device_model\":\"" << req.device_model << "\",\"limit_ad_tracking\":" << req.limit_ad_tracking << ",\"app_version\":\"" << req.app_version << "\"";
-		if (isEvent) {
+		if (isEvent)
+		{
 			oss << ",\"event_parameters\":" << req.event_parameters << ",\"event_name\":\"" << req.event_name << "\"";
-			if (req.event_custom_parameters != "") {
+			if (req.event_custom_parameters != "")
+			{
 				oss << ",\"event_custom_parameters\":" << req.event_custom_parameters;
 			}
 		}
-		if (!req.customer_user_id.empty()) {
+		if (!req.customer_user_id.empty())
+		{
 			oss << ",\"customer_user_id\":\"" << req.customer_user_id << "\"";
 		}
 		oss << "}";
@@ -227,7 +231,6 @@ public:
 		ss >> std::get_time(&t, format.c_str());
 		return mktime(&t);
 	}
-
 
 	bool isInstallOlderThanDate(string date)
 	{
