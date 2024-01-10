@@ -15,6 +15,10 @@
 #include "Interfaces/IHttpRequest.h"
 #include "Interfaces/IHttpResponse.h"
 
+#ifdef WIN32
+#define stat _stat
+#endif
+
 using namespace std;
 
 class AppsflyerModule
@@ -49,7 +53,7 @@ public:
 		std::string json_data_str = ss.str();
 
 		FHttpModule &httpModule = FHttpModule::Get();
-		auto pRequest = httpModule.CreateRequest();
+		TSharedRef<IHttpRequest, ESPMode::ThreadSafe> pRequest = httpModule.CreateRequest();
 
 		FString urlFString(url.c_str());
 		pRequest->SetURL(urlFString);
@@ -86,7 +90,7 @@ public:
 	// report inapp event to AppsFlyer
 	FHttpRequestRef af_inappEvent(RequestData req)
 	{
-		std::string url = "https://events.appsflyer.com/v1.0/c2s/inapp/app/nativepc/" + _appid;
+		std::string url = "https://events.appsflyer.com/v1.0/c2s/inapp/app/epic/" + _appid;
 
 		/* Now specify the POST data */
 		std::string jsonData = postDataStr(req, true);
@@ -94,21 +98,17 @@ public:
 		return send_http_post(url, jsonData, INAPP_EVENT_REQUEST);
 	}
 
-	std::string postDataStr(RequestData req, bool isEvent = false)
-	{
+	std::string postDataStr(RequestData req, bool isEvent = false) {
 		std::ostringstream oss;
 		oss << "{\"device_ids\":[{\"type\":\"" << req.device_ids[0].type << "\",\"value\":\"" << req.device_ids[0].value << "\"}";
 		oss << "],\"request_id\":\"" << req.request_id << "\",\"device_os_version\":\"" << req.device_os_version << "\",\"device_model\":\"" << req.device_model << "\",\"limit_ad_tracking\":" << req.limit_ad_tracking << ",\"app_version\":\"" << req.app_version << "\"";
-		if (isEvent)
-		{
+		if (isEvent) {
 			oss << ",\"event_parameters\":" << req.event_parameters << ",\"event_name\":\"" << req.event_name << "\"";
-			if (req.event_custom_parameters != "")
-			{
+			if (req.event_custom_parameters != "") {
 				oss << ",\"event_custom_parameters\":" << req.event_custom_parameters;
 			}
 		}
-		if (!req.customer_user_id.empty())
-		{
+		if (!req.customer_user_id.empty()) {
 			oss << ",\"customer_user_id\":\"" << req.customer_user_id << "\"";
 		}
 		oss << "}";
@@ -137,8 +137,8 @@ public:
 		currentData.Add(UTF8_TO_TCHAR(counter.c_str()));
 		FString len = FString::FromInt(currentData.Num());
 		UE_LOG(LogTemp, Warning, TEXT("Length of data array: %s"), *len);
-		UE_LOG(LogTemp, Warning, TEXT("SAVED ITEM 1: %s"), UTF8_TO_TCHAR(guid_str.c_str()));
-		UE_LOG(LogTemp, Warning, TEXT("SAVED ITEM 2: %s"), UTF8_TO_TCHAR(counter.c_str()));
+		UE_LOG(LogTemp, Warning, TEXT("Saved File 1: %s"), UTF8_TO_TCHAR(guid_str.c_str()));
+		UE_LOG(LogTemp, Warning, TEXT("Saved File 2: %s"), UTF8_TO_TCHAR(counter.c_str()));
 		bool success = FFileHelper::SaveStringArrayToFile(currentData, *dataPath);
 		FString result = success ? ("Successful") : ("Failed");
 		UE_LOG(LogTemp, Warning, TEXT("Saved File: %s"), *result);
@@ -232,20 +232,25 @@ public:
 		return mktime(&t);
 	}
 
+
 	bool isInstallOlderThanDate(string date)
 	{
-		bool isInstallOlder = false;
-
+		bool isInstallOlder = NULL;
 		FString launchDir = FPaths::LaunchDir();
 		UE_LOG(LogTemp, Warning, TEXT("launchDir: %s"), *launchDir);
-		const char *folderPathCh = StringCast<ANSICHAR>(*launchDir).Get();
+		const char* folderPathCh = StringCast<ANSICHAR>(*launchDir).Get();
 
 		struct stat result;
 		if (stat(folderPathCh, &result) == 0)
 		{
-			__time64_t mod_time = result.st_mtime;
-			std::time_t excludeInstallDateBefore = to_time_t(date);
-			double diff = difftime(mod_time, excludeInstallDateBefore);
+			struct tm* mod_time = localtime(&result.st_ctime);
+			std::time_t mod_time_t = result.st_mtime;
+			//printf("File time and date: %s", asctime(mod_time));
+
+			//__time64_t mod_time = result.st_mtime;
+			time_t excludeInstallDateBefore = to_time_t(date);
+			//printf("File time and date 2: %s", asctime(localtime(&excludeInstallDateBefore)));
+			double diff = difftime(mod_time_t, excludeInstallDateBefore);
 			isInstallOlder = diff < 0;
 		}
 
@@ -276,7 +281,7 @@ private:
 	// report first open event to AppsFlyer
 	FHttpRequestRef af_firstOpenRequest(RequestData req)
 	{
-		std::string url = "https://events.appsflyer.com/v1.0/c2s/first_open/app/nativepc/" + _appid;
+		std::string url = "https://events.appsflyer.com/v1.0/c2s/first_open/app/epic/" + _appid;
 
 		/* Now specify the POST data */
 		std::string jsonData = postDataStr(req);
@@ -288,7 +293,7 @@ private:
 	// report session event (after the counter passes 2 opens) to AppsFlyer
 	FHttpRequestRef af_sessionRequest(RequestData req)
 	{
-		std::string url = "https://events.appsflyer.com/v1.0/c2s/session/app/nativepc/" + _appid;
+		std::string url = "https://events.appsflyer.com/v1.0/c2s/session/app/epic/" + _appid;
 
 		/* Now specify the POST data */
 		std::string jsonData = postDataStr(req);

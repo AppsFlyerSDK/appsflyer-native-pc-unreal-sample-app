@@ -262,29 +262,41 @@ using Super = AGameModeBase;
 ```c++
 void AAppsFlyerSampleGameMode::StartPlay()
 {
-Super::StartPlay();
-// af module init
-AppsflyerPCModule()->Init(<< DevKey >>, << AppID >>);
+   Super::StartPlay();
+   // af module init
+   AppsflyerPCModule()->Init(<< DevKey >>, << AppID >>);
 
-// af send firstopen/session
-AppsflyerPCModule()->Start();
+   // af send firstopen/session
+   AppsflyerPCModule()->Start();
 
-// set event name
-std::string event_name = "af_purchase";
-// set json string
-std::string event_parameters = "{\"af_currency\":\"USD\",\"af_price\":6.66,\"af_revenue\":24.12}";
-// af send inapp event
-AppsflyerPCModule()->LogEvent(event_name, event_parameters);
+   // set event name
+   std::string event_name = "af_purchase";
+   // set json string
+   std::string event_parameters = "{\"af_currency\":\"USD\",\"af_price\":6.66,\"af_revenue\":24.12}";
+   // af send inapp event
+   AppsflyerPCModule()->LogEvent(event_name, event_parameters);
+   if (AppsflyerPCModule()->IsInstallOlderThanDate("2025-January-01 23:12:34")) {
+      UE_LOG(LogTemp, Warning, TEXT("2025-January-01 23:12:34: true"));
+   }
+   else {
+      UE_LOG(LogTemp, Warning, TEXT("2025-January-01 23:12:34: false"));
+   }
+   if (AppsflyerPCModule()->IsInstallOlderThanDate("2023-January-01 23:12:34")) {
+      UE_LOG(LogTemp, Warning, TEXT("2023-January-01 23:12:34: true"));
+   }
+   else {
+      UE_LOG(LogTemp, Warning, TEXT("2023-January-01 23:12:34: false"));
+   }
 
-// set non-English values for testing UTF-8 support
-std::wstring ws = L"車B1234 こんにちは";
-std::wstring ws2 = L"新人邀约购物日";
-std::string event_custom_parameters = "{\"goodsName\":\"" + AppsflyerPCModule()->to_utf8(ws) + "\",\"goodsName2\":\"" + AppsflyerPCModule()->to_utf8(ws2) + "\"}";
-// af send inapp event with custom params
-AppsflyerPCModule()->LogEvent(event_name, event_parameters, event_custom_parameters);
+   // set non-English values for testing UTF-8 support 
+   std::wstring ws = L"車B1234 こんにちは";
+   std::wstring ws2 = L"新人邀约购物日";
+   std::string event_custom_parameters = "{\"goodsName\":\"" + AppsflyerPCModule()->to_utf8(ws) + "\",\"goodsName2\":\"" + AppsflyerPCModule()->to_utf8(ws2) + "\"}";
+   // af send inapp event with custom params
+   AppsflyerPCModule()->LogEvent(event_name, event_parameters, event_custom_parameters);
 
-// stop the SDK
-AppsflyerPCModule()->Stop();
+   // stop the SDK
+   AppsflyerPCModule()->Stop();
 }
 ```
 

@@ -150,11 +150,11 @@ void CAppsflyerPCModule::SendHTTPReq(FHttpRequestRef pRequest, int64 contextId)
 					UE_LOG(LogTemp, Warning, TEXT("HTTP ResponseCode: %i"), pResponse->GetResponseCode());
 					if (contextId == FIRST_OPEN_REQUEST)
 					{
-						UE_LOG(LogTemp, Warning, TEXT("FIRST_OPEN_REQUEST event"));
+						UE_LOG(LogTemp, Warning, TEXT("AF: FirstOpen request"));
 					}
 					else
 					{
-						UE_LOG(LogTemp, Warning, TEXT("SESSION_REQUEST event"));
+						UE_LOG(LogTemp, Warning, TEXT("AF: Session request"));
 					}
 
 					if (pResponse->GetResponseCode() == EHttpResponseCodes::Ok || pResponse->GetResponseCode() == EHttpResponseCodes::Accepted)
@@ -195,7 +195,7 @@ void CAppsflyerPCModule::SendHTTPReq(FHttpRequestRef pRequest, int64 contextId)
 					// We should have a JSON response - attempt to process it.
 					AppsflyerModule afc(devkey, appID);
 					UE_LOG(LogTemp, Warning, TEXT("HTTP ResponseCode: %i"), pResponse->GetResponseCode());
-					UE_LOG(LogTemp, Warning, TEXT("INAPP_EVENT_REQUEST event"));
+					UE_LOG(LogTemp, Warning, TEXT("AF: InApp Event request"));
 				}
 				else
 				{
