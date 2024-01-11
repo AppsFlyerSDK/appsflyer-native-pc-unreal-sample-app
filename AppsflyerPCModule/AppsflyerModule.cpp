@@ -235,7 +235,7 @@ public:
 
 	bool isInstallOlderThanDate(string date)
 	{
-		bool isInstallOlder = NULL;
+		bool isInstallOlder = false;
 		FString launchDir = FPaths::LaunchDir();
 		UE_LOG(LogTemp, Warning, TEXT("launchDir: %s"), *launchDir);
 		const char* folderPathCh = StringCast<ANSICHAR>(*launchDir).Get();
