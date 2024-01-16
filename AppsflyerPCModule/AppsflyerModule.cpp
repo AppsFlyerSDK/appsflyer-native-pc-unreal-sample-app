@@ -53,7 +53,7 @@ public:
 		std::string json_data_str = ss.str();
 
 		FHttpModule &httpModule = FHttpModule::Get();
-		TSharedRef<IHttpRequest, ESPMode::ThreadSafe> pRequest = httpModule.CreateRequest();
+		auto = httpModule.CreateRequest();
 
 		FString urlFString(url.c_str());
 		pRequest->SetURL(urlFString);
@@ -90,7 +90,7 @@ public:
 	// report inapp event to AppsFlyer
 	FHttpRequestRef af_inappEvent(RequestData req)
 	{
-		std::string url = "https://events.appsflyer.com/v1.0/c2s/inapp/app/epic/" + _appid;
+		std::string url = "https://events.appsflyer.com/v1.0/c2s/inapp/app/nativepc/" + _appid;
 
 		/* Now specify the POST data */
 		std::string jsonData = postDataStr(req, true);
@@ -281,7 +281,7 @@ private:
 	// report first open event to AppsFlyer
 	FHttpRequestRef af_firstOpenRequest(RequestData req)
 	{
-		std::string url = "https://events.appsflyer.com/v1.0/c2s/first_open/app/epic/" + _appid;
+		std::string url = "https://events.appsflyer.com/v1.0/c2s/first_open/app/nativepc/" + _appid;
 
 		/* Now specify the POST data */
 		std::string jsonData = postDataStr(req);
@@ -293,7 +293,7 @@ private:
 	// report session event (after the counter passes 2 opens) to AppsFlyer
 	FHttpRequestRef af_sessionRequest(RequestData req)
 	{
-		std::string url = "https://events.appsflyer.com/v1.0/c2s/session/app/epic/" + _appid;
+		std::string url = "https://events.appsflyer.com/v1.0/c2s/session/app/nativepc/" + _appid;
 
 		/* Now specify the POST data */
 		std::string jsonData = postDataStr(req);
