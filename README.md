@@ -113,7 +113,7 @@ void LogEvent(std::string event_name, std::string event_values, std::string cust
 ```c++
 // Setting the event parameters json string and event name
 std::string event_name = "af_purchase";
-std::string event_parameters = "{\"af_currency\":\"USD\",\"af_price\":6.66,\"af_revenue\":24.12}";
+std::string event_parameters = "{\"af_currency\":\"USD\",\"af_revenue\":24.12}";
 // Send the InApp event request
 AppsflyerPCModule()->LogEvent(event_name, event_parameters);
 
@@ -272,7 +272,7 @@ void AAppsFlyerSampleGameMode::StartPlay()
    // set event name
    std::string event_name = "af_purchase";
    // set json string
-   std::string event_parameters = "{\"af_currency\":\"USD\",\"af_price\":6.66,\"af_revenue\":24.12}";
+   std::string event_parameters = "{\"af_currency\":\"USD\",\"af_revenue\":24.12}";
    // af send inapp event
    AppsflyerPCModule()->LogEvent(event_name, event_parameters);
    if (AppsflyerPCModule()->IsInstallOlderThanDate("2025-January-01 23:12:34")) {
