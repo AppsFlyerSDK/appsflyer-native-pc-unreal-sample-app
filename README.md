@@ -42,7 +42,7 @@ void Init(const char* devkey, const char* appID)
 <span id="app-details">**Arguments**:</span>
 
 - `DEV_KEY`: Get from the marketer or [AppsFlyer HQ](https://support.appsflyer.com/hc/en-us/articles/211719806-App-settings-#general-app-settings).
-- `APP_ID`: Your Appsflyer app id.
+- `APP_ID`: Your Appsflyer app id (excluding the `nativepc-` prefix).
 
 
 **Usage**:
