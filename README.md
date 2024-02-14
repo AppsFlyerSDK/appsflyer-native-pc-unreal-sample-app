@@ -61,6 +61,10 @@ This method sends first open/session requests to AppsFlyer.
 void Start(bool skipFirst = false)
 ```
 
+**Arguments**
+
+- `bool skipFirst`: Determines whether or not to skip first open events and send session events. The value is false by default. If true , first open events are skipped and session events are sent. [See example](#skipFirstExample)
+
 **Usage**:
 
 ```c++
@@ -152,6 +156,10 @@ The customer ID is available in raw data reports and in the postbacks sent via A
 void SetCustomerUserId(std::string cuid)
 ```
 
+**Arguments**:
+
+- `std::string cuid`: Custom user id.
+
 **Usage**:
 
 ```c++
@@ -188,7 +196,12 @@ This method receives a date string and returns true if the game folder modificat
 bool IsInstallOlderThanDate(std::string datestring)
 ```
 
+**Arguments**:
+
+- `std::string datestring`: Date string in `yyyy-mm-ddThh:mm:ss+hh:mm` format.
+
 **Usage**:
+<div id="skipFirstExample"></div>
 
 ```c++
 // the modification date in this example is "2023-January-23 08:30:00"
