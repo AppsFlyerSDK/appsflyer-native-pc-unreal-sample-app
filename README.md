@@ -198,7 +198,7 @@ bool IsInstallOlderThanDate(std::string datestring)
 
 **Arguments**:
 
-- `std::string datestring`: Date string in `yyyy-mm-ddThh:mm:ss+hh:mm` format.
+- `std::string datestring`: Date string in `yyyy-MMMM-dd hh:mm:ss` format.
 
 **Usage**:
 <div id="skipFirstExample"></div>
